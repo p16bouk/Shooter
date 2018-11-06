@@ -3,7 +3,7 @@ var S1 = {
 preload: function() {
 
   game.load.spritesheet('explosion', '/assets/explode.png', 128, 128);
-  game.load.bitmapFont('spacefonts', '/assets/spacefont/spacefont.png', '/assets/spacefont/spacefont.xml');
+  game.load.bitmapFont('spacefont', '/assets/spacefont/spacefont.png', '/assets/spacefont/spacefont.xml');
 
   game.load.image('starfield', 'assets/starfield.png');
   game.load.image('ship', 'assets/ship.png');
@@ -123,7 +123,7 @@ create: function() {
     });
 
     //  Shields stat
-  shields = game.add.bitmapText(game.world.width - 250, 10, 'spacefonts', '' + player.health +'%', 50);
+  shields = game.add.bitmapText(game.world.width - 250, 10, 'spacefont', '' + player.health +'%', 50);
   shields.render = function () {
     shields.text = 'Shields: ' + Math.max(player.health, 0) +'%';
   };
