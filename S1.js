@@ -86,6 +86,7 @@ create: function() {
     blueEnemies.setAll('anchor.y', 0.5);
     blueEnemies.setAll('scale.x', 0.5);
     blueEnemies.setAll('scale.y', 0.5);
+    blueEnemies.setAll('angle', 90)
     blueEnemies.forEach(function(enemy){
         enemy.damageAmount = 40;
     });
