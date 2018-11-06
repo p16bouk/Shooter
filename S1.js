@@ -2,15 +2,15 @@ var S1 = {
 
 preload: function() {
 
-  game.load.spritesheet('explosion', '/assets/explode.png', 128, 128);
-  game.load.bitmapFont('spacefont', '/assets/spacefont/spacefont.png', '/assets/spacefont/spacefont.xml');
+  game.load.spritesheet('explosion', 'assets/explode.png', 128, 128);
+  game.load.bitmapFont('spacefont', 'assets/spacefont/spacefont.png', 'assets/spacefont/spacefont.xml');
 
   game.load.image('starfield', 'assets/starfield.png');
   game.load.image('ship', 'assets/ship.png');
   game.load.image('bullet', 'assets/bullets/bullet.png');
   game.load.image('enemy-green', 'assets/enemies/enemy2.png');
-  game.load.image('enemy-blue', '/assets/enemies/enemy3.png');
-  game.load.image('blueEnemyBullet', '/assets/bullets/blue-enemy-bullet.png');
+  game.load.image('enemy-blue', 'assets/enemies/enemy3.png');
+  game.load.image('blueEnemyBullet', 'assets/bullets/blue-enemy-bullet.png');
 
   this.load.audio('dead', 'audio/dead.mp3');
   this.load.audio('s1song', 'audio/s1song.wav');
