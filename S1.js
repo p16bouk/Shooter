@@ -3,11 +3,14 @@ var S1 = {
 preload: function() {
 
   game.load.spritesheet('explosion', '/assets/explode.png', 128, 128);
+  game.load.bitmapFont('spacefont', '/assets/spacefont/spacefont.png', '/assets/spacefont/spacefont.xml');
 
   game.load.image('starfield', 'assets/starfield.png');
   game.load.image('ship', 'assets/ship.png');
   game.load.image('bullet', 'assets/bullets/bullet.png');
   game.load.image('enemy-green', 'assets/enemies/enemy2.png');
+  game.load.image('enemy-blue', '/assets/enemies/enemy3.png');
+  game.load.image('blueEnemyBullet', '/assets/bullets/blue-enemy-bullet.png');
 
   this.load.audio('dead', 'audio/dead.mp3');
   this.load.audio('s1song', 'audio/s1song.wav');
@@ -63,10 +66,8 @@ create: function() {
   greenEnemies.setAll('anchor.y', 0.5);
   greenEnemies.setAll('scale.x', 0.5);
   greenEnemies.setAll('scale.y', 0.5);
-  greenEnemies.setAll('angle', 180);
   greenEnemies.forEach(function(enemy){
       addEnemyEmitterTrail(enemy);
-      enemy.body.setSize(enemy.width * 3 / 4, enemy.height * 3 / 4);
       enemy.damageAmount = 20;
       enemy.events.onKilled.add(function(){
            enemy.trail.kill();
@@ -74,6 +75,40 @@ create: function() {
     });
 
     game.time.events.add(1000, launchGreenEnemy);
+
+    //  More baddies!
+
+    blueEnemies = game.add.group();
+    blueEnemies.enableBody = true;
+    blueEnemies.physicsBodyType = Phaser.Physics.ARCADE;
+    blueEnemies.createMultiple(30, 'enemy-blue');
+    blueEnemies.setAll('anchor.x', 0.5);
+    blueEnemies.setAll('anchor.y', 0.5);
+    blueEnemies.setAll('scale.x', 0.5);
+    blueEnemies.setAll('scale.y', 0.5);
+    blueEnemies.forEach(function(enemy){
+        enemy.damageAmount = 40;
+    });
+
+    game.time.events.add(200, launchBlueEnemy);
+
+    //  Blue enemy's bullets
+    blueEnemyBullets = game.add.group();
+    blueEnemyBullets.enableBody = true;
+    blueEnemyBullets.physicsBodyType = Phaser.Physics.ARCADE;
+    blueEnemyBullets.createMultiple(30, 'blueEnemyBullet');
+    blueEnemyBullets.callAll('crop', null, {x: 90, y: 0, width: 90, height: 70});
+    blueEnemyBullets.setAll('alpha', 0.9);
+    blueEnemyBullets.setAll('anchor.x', 0.5);
+    blueEnemyBullets.setAll('anchor.y', 0.5);
+    blueEnemyBullets.setAll('outOfBoundsKill', true);
+    blueEnemyBullets.setAll('checkWorldBounds', true);
+    blueEnemyBullets.forEach(function(enemy){
+        enemy.body.setSize(20, 20);
+    });
+
+
+
 
     //  An explosion pool
   explosions = game.add.group();
@@ -87,10 +122,12 @@ create: function() {
     });
 
     //  Shields stat
-  shields = game.add.text(game.world.width - 150, 10, 'Shields: ' + player.health +'%', { font: '20px Arial', fill: '#fff' });
+  shields = game.add.bitmapText(game.world.width - 250, 10, 'spacefont', '' + player.health +'%', 50);
   shields.render = function () {
     shields.text = 'Shields: ' + Math.max(player.health, 0) +'%';
   };
+
+  shields.render();
 
 
 
@@ -111,12 +148,13 @@ create: function() {
   shipTrail.start(false, 5000, 10);
 
   //  Game over text
-  gameOver = game.add.text(game.world.centerX, game.world.centerY, 'GAME OVER!', { font: '84px Arial', fill: '#fff' });
-  gameOver.anchor.setTo(0.5, 0.5);
+  gameOver = game.add.bitmapText(game.world.centerX, game.world.centerY, 'spacefont', 'GAME OVER!', 110);
+  gameOver.x = gameOver.x - gameOver.textWidth / 2;
+  gameOver.y = gameOver.y - gameOver.textHeight / 3;
   gameOver.visible = false;
 
   //  Score
-  scoreText = game.add.text(10, 10, '', { font: '20px Arial', fill: '#fff' });
+  scoreText = game.add.bitmapText(10, 10, 'spacefont', '', 50);
   scoreText.render = function () {
    scoreText.text = 'Score: ' + score;
    };
@@ -176,6 +214,10 @@ update: function() {
         //  Check collisions
      game.physics.arcade.overlap(player, greenEnemies, shipCollide, null, this);
      game.physics.arcade.overlap(greenEnemies, bullets, hitEnemy, null, this);
+
+     game.physics.arcade.overlap(player, blueEnemies, shipCollide, null, this);
+     game.physics.arcade.overlap(bullets, blueEnemies, hitEnemy, null, this);
+     game.physics.arcade.overlap(blueEnemyBullets, player, enemyHitsPlayer, null, this);
 
      //  Game over?
     if (! player.alive && gameOver.visible === false) {
