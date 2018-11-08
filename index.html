@@ -139,7 +139,7 @@ function launchGreenEnemy() {
         if (enemy) {
             enemy.startingY = startingY;
             enemy.reset(game.width + horizontalSpacing * i, enemy.startingY);
-            enemy.body.velocity.x = horizontalspeedSpeed;
+            enemy.body.velocity.x = horizontalSpeed;
 
 						//  Set up firing
             var bulletSpeed = 400;
@@ -169,7 +169,7 @@ function launchGreenEnemy() {
                 }
 
               //  Kill enemies once they go off screen
-              if (this.x == 200) {
+              if (this.x == 0) {
                 this.kill();
               }
             };
