@@ -139,7 +139,7 @@ function launchGreenEnemy() {
         var enemy = blueEnemies.getFirstExists(false);
         if (enemy) {
             enemy.startingY = startingY;
-            enemy.reset(game.width + horizontalSpacing * i, enemy.startingY);
+            enemy.reset(1200 + horizontalSpacing * i, game.height / 2);
             enemy.body.velocity.x = horizontalSpeed;
 
 						//  Set up firing
