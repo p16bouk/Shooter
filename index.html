@@ -169,7 +169,7 @@ function launchGreenEnemy() {
                 }
 
               //  Kill enemies once they go off screen
-              if (this.x == 0) {
+              if (this.x < -200) {
                 this.kill();
               }
             };
@@ -177,7 +177,7 @@ function launchGreenEnemy() {
     }
 
     //  Send another wave soon
-    blueEnemyLaunchTimer = game.time.events.add(game.rnd.integerInRange(timeBetweenWaves, timeBetweenWaves + 4000), launchBlueEnemy);
+    blueEnemyLaunchTimer = game.time.events.add(timeBetweenWaves, launchBlueEnemy);
 }
 
 function enemyHitsPlayer (player, bullet) {
