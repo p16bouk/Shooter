@@ -9,7 +9,7 @@ preload: function() {
   game.load.image('ship', 'assets/ship.png');
   game.load.image('bullet', 'assets/bullets/bullet.png');
   game.load.image('enemy-green', 'assets/enemies/enemy2.png');
-  game.load.image('enemy-blue', 'assets/enemies/enemy3.png');
+  game.load.image('enemy-blue', 'assets/enemies/green-enemy.png');
   game.load.image('blueEnemyBullet', 'assets/bullets/blue-enemy-bullet.png');
 
   this.load.audio('dead', 'audio/dead.mp3');
