@@ -84,14 +84,14 @@ create: function() {
     blueEnemies.createMultiple(30, 'enemy-blue');
     blueEnemies.setAll('anchor.x', 0.5);
     blueEnemies.setAll('anchor.y', 0.5);
-    blueEnemies.setAll('scale.x', 0.5);
-    blueEnemies.setAll('scale.y', 0.5);
+    blueEnemies.setAll('scale.x', 0.75);
+    blueEnemies.setAll('scale.y', 0.75);
     blueEnemies.setAll('angle', 90)
     blueEnemies.forEach(function(enemy){
         enemy.damageAmount = 40;
     });
 
-    //game.time.events.add(1000, launchBlueEnemy);
+    game.time.events.add(1000, launchBlueEnemy);
 
     //  Blue enemy's bullets
     blueEnemyBullets = game.add.group();
