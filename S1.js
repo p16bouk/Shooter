@@ -64,8 +64,8 @@ create: function() {
   greenEnemies.createMultiple(5, 'enemy-green');
   greenEnemies.setAll('anchor.x', 0.5);
   greenEnemies.setAll('anchor.y', 0.5);
-  greenEnemies.setAll('scale.x', 0.5);
-  greenEnemies.setAll('scale.y', 0.5);
+  greenEnemies.setAll('scale.x', 0.75);
+  greenEnemies.setAll('scale.y', 0.75);
   greenEnemies.forEach(function(enemy){
       addEnemyEmitterTrail(enemy);
       enemy.damageAmount = 20;
