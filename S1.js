@@ -91,7 +91,7 @@ create: function() {
         enemy.damageAmount = 40;
     });
 
-    game.time.events.add(200, launchBlueEnemy);
+    //game.time.events.add(1000, launchBlueEnemy);
 
     //  Blue enemy's bullets
     blueEnemyBullets = game.add.group();
