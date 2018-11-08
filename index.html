@@ -77,6 +77,7 @@ function render() {
 		blueEnemies.callAll('kill');
 		blueEnemyBullets.callAll('kill');
 		game.time.events.remove(blueEnemyLaunchTimer);
+		game.time.events.add(4000, launchBlueEnemy);	
 
     //  Revive the player
     player.revive();
