@@ -17,7 +17,7 @@ body {
 </head>
 <body>
 	<script type="text/javascript">
-		var game = new Phaser.Game(800, 600, Phaser.CANVAS, '', this, false, false);
+		var game = new Phaser.Game(800, 450, Phaser.CANVAS, '', this, false, false);
 
 		function preload(){
 
@@ -77,7 +77,6 @@ function render() {
 		blueEnemies.callAll('kill');
 		blueEnemyBullets.callAll('kill');
 		game.time.events.remove(blueEnemyLaunchTimer);
-		game.time.events.add(4000, launchBlueEnemy);	
 
     //  Revive the player
     player.revive();
@@ -135,12 +134,12 @@ function launchGreenEnemy() {
     var timeBetweenWaves = 2500;
 
     //  Launch wave
-    for (var i =0; i < numEnemiesInWave; i++) {
+    for (var i = 0; i < numEnemiesInWave; i++) {
         var enemy = blueEnemies.getFirstExists(false);
         if (enemy) {
             enemy.startingY = startingY;
-            enemy.reset(1200 + horizontalSpacing * i, game.height / 2);
-            enemy.body.velocity.x = horizontalSpeed;
+            enemy.reset(game.width + horizontalSpacing * i, enemy.startingY);
+            enemy.body.velocity.x = -horizontalSpeed;
 
 						//  Set up firing
             var bulletSpeed = 400;
@@ -178,7 +177,7 @@ function launchGreenEnemy() {
     }
 
     //  Send another wave soon
-    blueEnemyLaunchTimer = game.time.events.add(timeBetweenWaves, launchBlueEnemy);
+    blueEnemyLaunchTimer = game.time.events.add(game.rnd.integerInRange(timeBetweenWaves, timeBetweenWaves + 4000), launchBlueEnemy);
 }
 
 function enemyHitsPlayer (player, bullet) {

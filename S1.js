@@ -2,15 +2,15 @@ var S1 = {
 
 preload: function() {
 
-  game.load.spritesheet('explosion', 'assets/explode.png', 128, 128);
-  game.load.bitmapFont('spacefont', 'assets/spacefont/spacefont.png', 'assets/spacefont/spacefont.xml');
+  game.load.spritesheet('explosion', '/assets/explode.png', 128, 128);
+  game.load.bitmapFont('spacefont', '/assets/spacefont/spacefont.png', '/assets/spacefont/spacefont.xml');
 
   game.load.image('starfield', 'assets/starfield.png');
   game.load.image('ship', 'assets/ship.png');
   game.load.image('bullet', 'assets/bullets/bullet.png');
   game.load.image('enemy-green', 'assets/enemies/enemy2.png');
-  game.load.image('enemy-blue', 'assets/enemies/green-enemy.png');
-  game.load.image('blueEnemyBullet', 'assets/bullets/blue-enemy-bullet.png');
+  game.load.image('enemy-blue', '/assets/enemies/enemy3.png');
+  game.load.image('blueEnemyBullet', '/assets/bullets/blue-enemy-bullet.png');
 
   this.load.audio('dead', 'audio/dead.mp3');
   this.load.audio('s1song', 'audio/s1song.wav');
@@ -64,8 +64,8 @@ create: function() {
   greenEnemies.createMultiple(5, 'enemy-green');
   greenEnemies.setAll('anchor.x', 0.5);
   greenEnemies.setAll('anchor.y', 0.5);
-  greenEnemies.setAll('scale.x', 0.75);
-  greenEnemies.setAll('scale.y', 0.75);
+  greenEnemies.setAll('scale.x', 0.5);
+  greenEnemies.setAll('scale.y', 0.5);
   greenEnemies.forEach(function(enemy){
       addEnemyEmitterTrail(enemy);
       enemy.damageAmount = 20;
@@ -84,14 +84,14 @@ create: function() {
     blueEnemies.createMultiple(30, 'enemy-blue');
     blueEnemies.setAll('anchor.x', 0.5);
     blueEnemies.setAll('anchor.y', 0.5);
-    blueEnemies.setAll('scale.x', 0.75);
-    blueEnemies.setAll('scale.y', 0.75);
+    blueEnemies.setAll('scale.x', 0.5);
+    blueEnemies.setAll('scale.y', 0.5);
     blueEnemies.setAll('angle', 90)
     blueEnemies.forEach(function(enemy){
         enemy.damageAmount = 40;
     });
 
-    game.time.events.add(1000, launchBlueEnemy);
+    game.time.events.add(200, launchBlueEnemy);
 
     //  Blue enemy's bullets
     blueEnemyBullets = game.add.group();
