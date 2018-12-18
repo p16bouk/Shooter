@@ -11,6 +11,12 @@ preload: function() {
   game.load.image('enemy-green', 'assets/enemies/enemy2.png');
   game.load.image('enemy-blue', '/assets/enemies/enemy3.png');
   game.load.image('blueEnemyBullet', '/assets/bullets/blue-enemy-bullet.png');
+  game.load.image('up1','/assets/ups/1up.jpg');
+	game.load.image('up2','/assets/ups/2up.jpg');
+	game.load.image('up3','/assets/ups/3up.jpg');
+  game.load.image('up4','/assets/ups/4up.jpg');
+  game.load.image('boss', '/assets/enemies/boss.png');
+	game.load.image('bossBullet', '/assets/bullets/blue-enemy-bullet.png');
 
   this.load.audio('dead', 'audio/dead.mp3');
   this.load.audio('s1song', 'audio/s1song.wav');
@@ -41,12 +47,61 @@ create: function() {
     game.physics.enable(player, Phaser.Physics.ARCADE);
     player.body.maxVelocity.setTo(MAXSPEED, MAXSPEED);
     player.body.drag.setTo(DRAG, DRAG);
+    player.weaponLevel = 1
     player.events.onKilled.add(function(){
         shipTrail.kill();
     });
     player.events.onRevived.add(function(){
         shipTrail.start(false, 5000, 10);
     });
+/*
+    // boss
+    			boss = game.add.sprite(0, 0, 'boss');
+    			boss.exists = false;
+    			boss.alive = false;
+    			boss.anchor.setTo(0.5, 0.5);
+    			boss.damageAmount = 50;
+    			boss.angle = 180;
+    			boss.scale.x = 0.6;
+    			boss.scale.y = 0.6;
+    			game.physics.enable(boss, Phaser.Physics.ARCADE);
+    			boss.body.maxVelocity.setTo(100, 80);
+    			boss.dying = false;
+          boss.finishOff = function() {
+				if (!boss.dying) {
+					boss.dying = true;
+					bossDeath.x = boss.x;
+					bossDeath.y = boss.y;
+					bossDeath.start(false, 1000, 50, 20);
+					//  kill boss after explotions
+					game.time.events.add(1000, function(){
+						var explosion = explosions.getFirstExists(false);
+						var beforeScaleX = explosions.scale.x;
+						var beforeScaleY = explosions.scale.y;
+						var beforeAlpha = explosions.alpha;
+						explosion.reset(boss.body.x + boss.body.halfWidth, boss.body.y + boss.body.halfHeight);
+						explosion.alpha = 0.4;
+						explosion.scale.x = 3;
+						explosion.scale.y = 3;
+						var animation = explosion.play('explosion', 30, false, true);
+						animation.onComplete.addOnce(function(){
+							explosion.scale.x = beforeScaleX;
+							explosion.scale.y = beforeScaleY;
+							explosion.alpha = beforeAlpha;
+						});
+						boss.kill();
+						booster.kill();
+						boss.dying = false;
+						bossDeath.on = false;
+					});
+					//  reset pacing for other enemies
+					blueEnemySpacing = 2500;
+					greenEnemySpacing = 1000;
+					//  give some bonus health
+					player.health = Math.min(100, player.health + 40);
+					nextlevel();
+				}
+			}; */
 
   //  Our bullet group
   bullets = game.add.group();
@@ -107,8 +162,43 @@ create: function() {
     blueEnemyBullets.forEach(function(enemy){
         enemy.body.setSize(20, 20);
     });
+/*
+    // Boss Bullets
+			bossBullet = game.add.group();
+			bossBullet.enableBody = true;
+			bossBullet.physicsBodyType = Phaser.Physics.ARCADE;
+			bossBullet.createMultiple(20, 'bossBullet');
+			bossBullet.callAll('crop', null, {x: 90, y: 0, width: 90, height: 40});
+			bossBullet.setAll('alpha', 0.9);
+			bossBullet.setAll('anchor.x', 0.5);
+			bossBullet.setAll('anchor.y', 0.5);
+			bossBullet.setAll('outOfBoundsKill', true);
+			bossBullet.setAll('checkWorldBounds', true);
+			bossBullet.forEach(function(bullet){
+				bullet.damageAmount = 20;
+				bullet.body.setSize(20, 20);
+			});
+*/
+    //Upgrade Icons
+    			up1 = game.add.group();
+    			up1.enableBody = true;
+    			up1.physicsBodyType = Phaser.Physics.ARCADE;
+    			up1.createMultiple(3,'up1');
 
+    			up2 = game.add.group();
+    			up2.enableBody = true;
+    			up2.physicsBodyType = Phaser.Physics.ARCADE;
+    			up2.createMultiple(3,'up2');
 
+    			up3 = game.add.group();
+    			up3.enableBody = true;
+    			up3.physicsBodyType = Phaser.Physics.ARCADE;
+    			up3.createMultiple(3,'up3');
+
+          up4 = game.add.group();
+    			up4.enableBody = true;
+    			up4.physicsBodyType = Phaser.Physics.ARCADE;
+    			up4.createMultiple(3,'up4');
 
 
     //  An explosion pool
@@ -121,6 +211,14 @@ create: function() {
   explosions.forEach( function(explosion) {
       explosion.animations.add('explosion');
     });
+
+    //  Big explosion
+    playerDeath = game.add.emitter(player.x, player.y);
+    playerDeath.width = 50;
+    playerDeath.height = 50;
+    playerDeath.makeParticles('explosion', [0,1,2,3,4,5,6,7], 10);
+    playerDeath.setAlpha(0.9, 0, 800);
+    playerDeath.setScale(0.1, 0.6, 0.1, 0.6, 1000, Phaser.Easing.Quintic.Out);
 
     //  Shields stat
   shields = game.add.bitmapText(game.world.width - 250, 10, 'spacefont', '' + player.health +'%', 50);
@@ -207,7 +305,34 @@ update: function() {
   				fireBullet();
           shooting.play();
   			}
-
+/*
+        if (!boss.alive) return;
+				if (boss.x > 700) {
+					boss.body.acceleration.x = -30;
+				}
+				if (boss.x < 700) {
+					boss.body.acceleration.x = 30;
+				}
+				if (boss.y > player.y + 50) {
+					boss.body.acceleration.y = -50;
+				} else if (boss.y < player.y - 50) {
+					boss.body.acceleration.y = 50;
+				} else {
+					boss.body.acceleration.y = 0;
+				}
+				//  Squish and rotate boss for illusion of "banking"
+				var bank = boss.body.velocity.y / MAXSPEED;
+				boss.scale.y = 0.6 - Math.abs(bank) / 3;
+				boss.angle = 270 - bank * 20;
+				booster.y = boss.y + -5 * bank;
+				booster.x = boss.x + 10 * Math.abs(bank) - boss.height / 2;
+				//  fire if player is in target
+				var angleToPlayer = game.math.radToDeg(game.physics.arcade.angleBetween(boss, player)) - 90;
+				var anglePointing = 180 - Math.abs(boss.angle);
+				if (anglePointing - angleToPlayer < 18) {
+					boss.fire();
+				}
+*/
   			//  Keep the shipTrail lined up with the ship
   			shipTrail.y = player.y;
   			shipTrail.x = player.x - 20;
@@ -215,6 +340,11 @@ update: function() {
         //  Check collisions
      game.physics.arcade.overlap(player, greenEnemies, shipCollide, null, this);
      game.physics.arcade.overlap(greenEnemies, bullets, hitEnemy, null, this);
+
+     game.physics.arcade.overlap(player, up1, playerhitsup1, null, this);
+		 game.physics.arcade.overlap(player, up2, playerhitsup2, null, this);
+		 game.physics.arcade.overlap(player, up3, playerhitsup3, null, this);
+     game.physics.arcade.overlap(player, up4, playerhitsup4, null, this);
 
      game.physics.arcade.overlap(player, blueEnemies, shipCollide, null, this);
      game.physics.arcade.overlap(bullets, blueEnemies, hitEnemy, null, this);
