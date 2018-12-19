@@ -169,7 +169,7 @@ create: function() {
     			up3.physicsBodyType = Phaser.Physics.ARCADE;
     			up3.createMultiple(3,'up3');
 
-          up4 = game.add.group();
+          		up4 = game.add.group();
     			up4.enableBody = true;
     			up4.physicsBodyType = Phaser.Physics.ARCADE;
     			up4.createMultiple(3,'up4');
@@ -195,7 +195,7 @@ create: function() {
     playerDeath.setScale(0.1, 0.6, 0.1, 0.6, 1000, Phaser.Easing.Quintic.Out);
 
     //  Shields stat
-  shields = game.add.bitmapText(game.world.width - 250, 10, 'spacefont', '' + player.health +'%', 50);
+  shields = game.add.bitmapText(game.world.width - 250, 10, 'spacefont', +player.health +'%', 50);
   shields.render = function () {
     shields.text = 'Shields: ' + Math.max(player.health, 0) +'%';
   };
