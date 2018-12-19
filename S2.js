@@ -1,4 +1,4 @@
-var S1 = {
+var S2 = {
 
 preload: function() {
 
@@ -8,18 +8,18 @@ preload: function() {
   game.load.image('starfield', 'assets/starfield.png');
   game.load.image('ship', 'assets/ship.png');
   game.load.image('bullet', 'assets/bullets/bullet.png');
-  game.load.image('enemy-green', 'assets/enemies/enemy2.png');
-  game.load.image('enemy-blue', 'assets/enemies/enemy3.png');
+  game.load.image('enemy-green', 'assets/enemies/green-enemy.png');
+  game.load.image('enemy-blue', 'assets/enemies/enemy1.png');
   game.load.image('blueEnemyBullet', 'assets/bullets/blue-enemy-bullet.png');
   game.load.image('up1','assets/ups/1up.jpg');
-	game.load.image('up2','assets/ups/2up.jpg');
-	game.load.image('up3','assets/ups/3up.jpg');
+  game.load.image('up2','assets/ups/2up.jpg');
+  game.load.image('up3','assets/ups/3up.jpg');
   game.load.image('up4','assets/ups/4up.jpg');
   game.load.image('boss', 'assets/enemies/boss.png');
-	game.load.image('deathray', 'assets/bullets/blue-enemy-bullet.png');
+  game.load.image('bossBullet', 'assets/bullets/blue-enemy-bullet.png');
 
   this.load.audio('dead', 'audio/dead.mp3');
-  this.load.audio('s1song', 'audio/s1song.wav');
+  this.load.audio('s2song', 'audio/s2song.wav');
   this.load.audio('lifelost', 'audio/lifelost.wav');
   this.load.audio('shooting', 'audio/shooting.wav');
   this.load.audio('win', 'audio/win.wav');
@@ -32,7 +32,7 @@ preload: function() {
 create: function() {
 
   menus.stop();
-  theme = game.add.audio('s1song');
+  theme = game.add.audio('s2song');
   theme.play('',0,1,true);
 
   game.scale.pageAlignHorizontally = true;
@@ -93,7 +93,7 @@ create: function() {
     blueEnemies.setAll('anchor.y', 0.5);
     blueEnemies.setAll('scale.x', 0.5);
     blueEnemies.setAll('scale.y', 0.5);
-    blueEnemies.setAll('angle', 180)
+    blueEnemies.setAll('angle', 90)
     blueEnemies.forEach(function(enemy){
         enemy.damageAmount = 40;
     });
@@ -115,43 +115,18 @@ create: function() {
         enemy.body.setSize(20, 20);
     });
 
-    badboss = game.add.group();
-        badboss.enableBody = true;
-        badboss.physicsBodyType = Phaser.Physics.ARCADE;
-        badboss.createMultiple(1, 'boss');
-        badboss.setAll('anchor.x', 0.5);
-        badboss.setAll('anchor.y', 0.5);
-        badboss.setAll('scale.x', 1);
-        badboss.setAll('scale.y', 1);
-        badboss.setAll('angle', 270);
-        badboss.forEach(function(enemy) {
-            addEnemyEmitterTrail(enemy);
-            enemy.body.setSize(enemy.width * 1, enemy.height * 1);
-            enemy.damageAmount = 30;
-            enemy.events.onKilled.add(function() {
-                enemy.trail.kill();
-            });
-        });
-
-        //  Boss's bullets
-        deathrays = game.add.group();
-        deathrays.enableBody = true;
-        deathrays.physicsBodyType = Phaser.Physics.ARCADE;
-        deathrays.createMultiple(100, 'deathray');
-        deathrays.callAll('crop', null, {
-            x: 90,
-            y: 0,
-            width: 90,
-            height: 70
-        });
-        deathrays.setAll('alpha', 0.9);
-        deathrays.setAll('anchor.x', 0.5);
-        deathrays.setAll('anchor.y', 0.5);
-        deathrays.setAll('outOfBoundsKill', true);
-        deathrays.setAll('checkWorldBounds', true);
-        deathrays.forEach(function(enemy) {
-            enemy.body.setSize(20, 20);
-        });
+    // boss
+			boss = game.add.sprite(0, 0, 'boss');
+			boss.exists = false;
+			boss.alive = false;
+			boss.anchor.setTo(0.5, 0.5);
+			boss.damageAmount = 50;
+			boss.angle = 180;
+			boss.scale.x = 0.6;
+			boss.scale.y = 0.6;
+			game.physics.enable(boss, Phaser.Physics.ARCADE);
+			boss.body.maxVelocity.setTo(100, 80);
+			boss.dying = false;
 
     //Upgrade Icons
     			up1 = game.add.group();
@@ -221,7 +196,7 @@ create: function() {
   shipTrail.start(false, 5000, 10);
 
   //  Game over text
-  gameOver = game.add.bitmapText(game.world.centerX, game.world.centerY, 'spacefont', 'GAME OVER!', 80);
+  gameOver = game.add.bitmapText(game.world.centerX, game.world.centerY, 'spacefont', 'GAME OVER!', 110);
   gameOver.x = gameOver.x - gameOver.textWidth / 2;
   gameOver.y = gameOver.y - gameOver.textHeight / 3;
   gameOver.visible = false;
@@ -230,99 +205,96 @@ create: function() {
   scoreText = game.add.bitmapText(10, 10, 'spacefont', '', 50);
   scoreText.render = function () {
    scoreText.text = 'Score: ' + score;
- };
+   };
   scoreText.render();
+
 
 },
 
 update: function() {
 
+  //  Scroll the background
+  starfield.tilePosition.x -= 2;
 
-  			//  Scroll the background
-  			starfield.tilePosition.x -= 2;
+  //  Reset the player, then check for movement keys
+  player.body.acceleration.y = 0;
+  player.body.acceleration.x = 0;
 
-  			//  Reset the player, then check for movement keys
-  			player.body.acceleration.y = 0;
-  			player.body.acceleration.x = 0;
+  if (cursors.up.isDown) {
+    player.body.acceleration.y = -ACCLERATION;
+  } else if (cursors.down.isDown) {
+    player.body.acceleration.y = ACCLERATION;
+  } else if (cursors.left.isDown) {
+    player.body.acceleration.x = -ACCLERATION;
+  } else if (cursors.right.isDown) {
+    player.body.acceleration.x = ACCLERATION;
+  }
 
-  			if (cursors.up.isDown) {
-  				player.body.acceleration.y = -ACCLERATION;
-  			} else if (cursors.down.isDown) {
-  				player.body.acceleration.y = ACCLERATION;
-  			} else if (cursors.left.isDown) {
-  				player.body.acceleration.x = -ACCLERATION;
-  			} else if (cursors.right.isDown) {
-  				player.body.acceleration.x = ACCLERATION;
-  			}
+  //  Stop at screen edges
+  if (player.x > game.width - 30) {
+    player.x = game.width - 30;
+    player.body.acceleration.x = 0;
+  }
+  if (player.x < 30) {
+    player.x = 30;
+    player.body.acceleration.x = 0;
+  }
+  if (player.y > game.height - 15) {
+    player.y = game.height - 15;
+    player.body.acceleration.y = 0;
+  }
+  if (player.y < 15) {
+    player.y = 15;
+    player.body.acceleration.y = 0;
+  }
 
-  			//  Stop at screen edges
-  			if (player.x > game.width - 30) {
-  				player.x = game.width - 30;
-  				player.body.acceleration.x = 0;
-  			}
-  			if (player.x < 30) {
-  				player.x = 30;
-  				player.body.acceleration.x = 0;
-  			}
-  			if (player.y > game.height - 15) {
-  				player.y = game.height - 15;
-  				player.body.acceleration.y = 0;
-  			}
-  			if (player.y < 15) {
-  				player.y = 15;
-  				player.body.acceleration.y = 0;
-  			}
+  //  Fire bullet
+  if (player.alive && (fireButton.isDown || game.input.activePointer.isDown)) {
+    shooting = game.add.audio('shooting');
+    fireBullet();
+    shooting.play();
+  }
 
-  			//  Fire bullet
-  			if (player.alive && (fireButton.isDown || game.input.activePointer.isDown)) {
-          shooting = game.add.audio('shooting');
-  				fireBullet();
-          shooting.play();
-  			}
+  //  Keep the shipTrail lined up with the ship
+  shipTrail.y = player.y;
+  shipTrail.x = player.x - 20;
 
-  			//  Keep the shipTrail lined up with the ship
-  			shipTrail.y = player.y;
-  			shipTrail.x = player.x - 20;
+  //  Check collisions
+game.physics.arcade.overlap(player, greenEnemies, shipCollide, null, this);
+game.physics.arcade.overlap(greenEnemies, bullets, hitEnemy, null, this);
 
-        //  Check collisions
-     game.physics.arcade.overlap(player, greenEnemies, shipCollide, null, this);
-     game.physics.arcade.overlap(greenEnemies, bullets, hitEnemy, null, this);
-
-     game.physics.arcade.overlap(player, up1, playerhitsup1, null, this);
-		 game.physics.arcade.overlap(player, up2, playerhitsup2, null, this);
-     game.physics.arcade.overlap(player, up3, playerhitsup3, null, this);
-		 game.physics.arcade.overlap(player, up4, playerhitsup4, null, this);
-
-
-     game.physics.arcade.overlap(player, blueEnemies, shipCollide, null, this);
-     game.physics.arcade.overlap(bullets, blueEnemies, hitEnemy, null, this);
-     game.physics.arcade.overlap(blueEnemyBullets, player, enemyHitsPlayer, null, this);
-
-     game.physics.arcade.overlap(player, badboss, shipCollide, null, this);
-     game.physics.arcade.overlap(badboss, bullets, hitBoss, null, this);
-    game.physics.arcade.overlap(player, deathrays, enemyHitsPlayer, null, this);
+game.physics.arcade.overlap(player, up1, playerhitsup1, null, this);
+game.physics.arcade.overlap(player, up2, playerhitsup2, null, this);
+game.physics.arcade.overlap(player, up3, playerhitsup3, null, this);
+game.physics.arcade.overlap(player, up4, playerhitsup4, null, this);
 
 
-     //  Game over?
-    if (! player.alive && gameOver.visible === false) {
-        gameOver.visible = true;
-        gameOver.alpha = 0;
-        var fadeInGameOver = game.add.tween(gameOver);
-        fadeInGameOver.to({alpha: 1}, 1000, Phaser.Easing.Quintic.Out);
-        fadeInGameOver.onComplete.add(setResetHandlers);
-        fadeInGameOver.start();
-        function setResetHandlers() {
-            //  The "click to restart" handler
-            tapRestart = game.input.onTap.addOnce(_restart,this);
-            spaceRestart = fireButton.onDown.addOnce(_restart,this);
-            function _restart() {
-              tapRestart.detach();
-              spaceRestart.detach();
-              restart();
-            }
-        }
-    }
+game.physics.arcade.overlap(player, blueEnemies, shipCollide, null, this);
+game.physics.arcade.overlap(bullets, blueEnemies, hitEnemy, null, this);
+game.physics.arcade.overlap(blueEnemyBullets, player, enemyHitsPlayer, null, this);
 
-  		}
+game.physics.arcade.overlap(player, boss, shipCollide, null, this);
+
+//  Game over?
+if (! player.alive && gameOver.visible === false) {
+  gameOver.visible = true;
+  gameOver.alpha = 0;
+  var fadeInGameOver = game.add.tween(gameOver);
+  fadeInGameOver.to({alpha: 1}, 1000, Phaser.Easing.Quintic.Out);
+  fadeInGameOver.onComplete.add(setResetHandlers);
+  fadeInGameOver.start();
+  function setResetHandlers() {
+      //  The "click to restart" handler
+      tapRestart = game.input.onTap.addOnce(_restart,this);
+      spaceRestart = fireButton.onDown.addOnce(_restart,this);
+      function _restart() {
+        tapRestart.detach();
+        spaceRestart.detach();
+        restart();
+      }
+  }
+}
+
+}
 
 }
