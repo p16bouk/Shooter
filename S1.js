@@ -3,7 +3,7 @@ var S1 = {
 preload: function() {
 
   game.load.spritesheet('explosion', 'assets/explode.png', 128, 128);
-  game.load.bitmapFont('spacefont', 'assets/spacefont/spacefont.png', '/assets/spacefont/spacefont.xml');
+  game.load.bitmapFont('spacefont', 'assets/spacefont/spacefont.png', 'assets/spacefont/spacefont.xml');
 
   game.load.image('starfield', 'assets/starfield.png');
   game.load.image('ship', 'assets/ship.png');
