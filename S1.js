@@ -227,7 +227,7 @@ create: function() {
   gameOver.visible = false;
 
   //  Score
-  scoreText = game.add.bitmapText(10, 10, 'spacefont', '', 50);
+  scoreText = game.add.bitmapText(10, 10, 'spacefont', +score, 50);
   scoreText.render = function () {
    scoreText.text = 'Score: ' + score;
  };
